@@ -1,33 +1,1414 @@
-import React,{useEffect,useState}from'react';
-import{createRoot}from'react-dom/client';
-import{Menu,X,Search,Bookmark,ArrowRight,BookOpen,Heart,Sprout,ShieldCheck,Clock,ChevronRight,Home,FileText,Library,Video,Image,Users,BarChart3,Settings,CheckCircle2,AlertTriangle,Plus,MoreHorizontal,Eye,CalendarDays,Share2,Volume2,Download,Filter,GraduationCap,Globe2}from'lucide-react';
-import'./styles.css';
-const sections={sunnah:{title:'Sunnah Garden',eyebrow:'Live beautifully',icon:'🌱',desc:'Small, authentic Prophetic practices for every part of your day.',color:'#dff3d8'},hadith:{title:'Hadith Garden',eyebrow:'Words of guidance',icon:'📜',desc:'Authentic narrations, clearly sourced and gently explained.',color:'#fff1cf'},quran:{title:'Qur’an Garden',eyebrow:'Words of Allah',icon:'📖',desc:'Read, understand and reflect on lessons from the Qur’an.',color:'#dcefea'},seerah:{title:'Seerah Garden',eyebrow:'Walk through history',icon:'🕋',desc:'A respectful, source-conscious journey through the life of Rasulullah ﷺ.',color:'#f1e4d2'},character:{title:'Character Garden',eyebrow:'Grow what is within',icon:'♥',desc:'Learn the beautiful qualities that bring faith into everyday life.',color:'#fae3df'},duas:{title:'Du‘a Garden',eyebrow:'Remember Allah',icon:'🤲',desc:'Authentic supplications for the moments that make up a day.',color:'#e3e1f5'},stories:{title:'Islamic Stories',eyebrow:'Stories with roots',icon:'☾',desc:'Gentle, meaningful stories grounded in Islamic values.',color:'#e9e0cd'},books:{title:'Sunna Seed Library',eyebrow:'Open a world of learning',icon:'📚',desc:'Books and resources for little learners, families and educators.',color:'#f4dfc4'},videos:{title:'Video Library',eyebrow:'Watch & wonder',icon:'▶',desc:'Thoughtful Islamic learning, one episode at a time.',color:'#d9ebe4'},articles:{title:'Sunna Seed Journal',eyebrow:'For thoughtful families',icon:'✦',desc:'Ideas, guidance and reflections for nurturing young Muslims.',color:'#e2ead6'},series:{title:'Learning Paths',eyebrow:'Step by gentle step',icon:'🧭',desc:'Structured journeys that turn discovery into lasting practice.',color:'#dbe8cf'},resources:{title:'Family Resources',eyebrow:'Learn together',icon:'✂',desc:'Printable activities, reflection sheets and classroom materials.',color:'#faeccf'},parents:{title:'Parent & Educator Space',eyebrow:'Help their garden grow',icon:'⌂',desc:'Practical tools for meaningful Islamic learning at home and school.',color:'#dfebe7'}};
-const items=[{id:'SS-HAD-0001',type:'hadith',title:'A Smile is Charity',excerpt:'Even the smallest kindness can carry great weight.',age:'All ages',time:'4 min',source:'Jamiʿ at-Tirmidhi 1956',arabic:'تَبَسُّمُكَ فِي وَجْهِ أَخِيكَ لَكَ صَدَقَةٌ',tag:'Kindness'},{id:'SS-SEA-0001',type:'seerah',title:'The Trustworthy One',excerpt:'Why the people of Makkah called Rasulullah ﷺ Al-Amīn.',age:'7–12',time:'7 min',source:'Seerah sources reviewed',tag:'Trustworthiness'},{id:'SS-QUR-0001',type:'quran',title:'Speak Words of Goodness',excerpt:'A garden lesson from Surah Al-Baqarah about how we speak.',age:'8–14',time:'6 min',source:'Qur’an 2:83',arabic:'وَقُولُوا لِلنَّاسِ حُسْنًا',tag:'Good speech'},{id:'SS-CHAR-0001',type:'character',title:'The Courage to Tell the Truth',excerpt:'Truthfulness is a seed that grows into trust.',age:'6–11',time:'5 min',source:'Sahih Muslim 2607',tag:'Truthfulness'},{id:'SS-KID-0001',type:'stories',title:'Maryam and the Lost Pencil Case',excerpt:'Maryam finds something that is not hers and learns about amanah.',age:'5–9',time:'8 min',source:'Fictional teaching story',tag:'Amanah'},{id:'SS-DUA-0001',type:'duas',title:'Before We Eat',excerpt:'Remembering Allah before enjoying our food.',age:'All ages',time:'2 min',source:'Sunan Abi Dawud 3767',arabic:'بِسْمِ اللَّهِ',tag:'Daily du‘a'},{id:'SS-SUN-0001',type:'sunnah',title:'Begin with the Right',excerpt:'A simple Sunnah to remember while getting ready.',age:'5–10',time:'3 min',source:'Sahih al-Bukhari 168',tag:'Daily Sunnah'},{id:'SS-BOOK-0001',type:'books',title:'My First Garden of Manners',excerpt:'Seven beautifully illustrated lessons for growing hearts.',age:'4–8',time:'32 pages',source:'Sunna Seed Press',tag:'Children’s book'},{id:'SS-VID-0001',type:'videos',title:'What Makes a Good Neighbour?',excerpt:'Zayd and Safiyyah discover a beautiful teaching.',age:'6–12',time:'06:24',source:'Sunna Seed Studio',tag:'Little Seeds'},{id:'SS-ART-0001',type:'articles',title:'Making Islamic Learning Feel Natural at Home',excerpt:'Five gentle rhythms for growing a home of remembrance.',age:'Parents',time:'6 min',source:'Editorial review',tag:'Family learning'}];
-const nav=[['Sunnah','/sunnah'],['Hadith','/hadith'],['Qur’an','/quran'],['Seerah','/seerah'],['Little Seeds','/kids'],['Library','/books']];
-function go(p){history.pushState({},'',p);dispatchEvent(new PopStateEvent('popstate'));scrollTo({top:0,behavior:'smooth'})}
-function App(){const[p,setP]=useState(location.pathname),[menu,setMenu]=useState(false),[search,setSearch]=useState(false);useEffect(()=>{let f=()=>setP(location.pathname);addEventListener('popstate',f);return()=>removeEventListener('popstate',f)},[]);return <><a className="skip" href="#main">Skip to content</a>{p.startsWith('/admin')?<Admin route={p}/>:<><Header menu={menu} setMenu={setMenu} openSearch={()=>setSearch(true)}/><main id="main"><Router route={p}/></main><Footer/></>}{search&&<SearchOverlay close={()=>setSearch(false)}/>}</>}
-function Header({menu,setMenu,openSearch}){return <header className="nav"><button className="brand" onClick={()=>go('/')}><span className="brandmark"><Sprout/></span><span>SUNNA SEED<small>PROJECT</small></span></button><nav className={menu?'open':''}>{nav.map(([n,p])=><button key={p} onClick={()=>{go(p);setMenu(false)}}>{n}</button>)}<button onClick={()=>go('/parents')}>Parents</button></nav><div className="navtools"><button className="iconbtn" onClick={openSearch}><Search/></button><button className="startbtn" onClick={()=>go('/start')}>Start learning <ArrowRight/></button><button className="menubtn iconbtn" onClick={()=>setMenu(!menu)}>{menu?<X/>:<Menu/>}</button></div></header>}
-function Router({route}){if(route==='/')return <HomePage/>;if(route==='/start')return <Start/>;if(route==='/kids')return <Kids/>;if(['/about','/contact','/social'].includes(route))return <InfoPage kind={route.slice(1)}/>;let [key,slug]=route.split('/').filter(Boolean);if(slug)return <Detail item={items.find(x=>x.type===key)||items[0]}/>;if(sections[key])return <Listing kind={key}/>;return <NotFound/>}
-function HomePage(){return <><section className="hero"><div className="heroart"><div className="sun"/><div className="mount m1"/><div className="mount m2"/><div className="dome"><i/></div><div className="water"/></div><div className="heroCopy"><span className="pill light"><Sprout/> A living garden of Islamic knowledge</span><h1>Plant the Sunnah.<br/><em>Grow the Ummah.</em></h1><p>Discover the Qur’an, authentic Sunnah, Seerah and beautiful lessons made to grow with the next generation.</p><div className="actions"><button className="primary" onClick={()=>go('/start')}>Start learning <ArrowRight/></button><button className="secondary" onClick={()=>go('/sunnah')}>Explore the garden</button></div><div className="trust"><span><ShieldCheck/> Source-conscious</span><span><Heart/> Child-friendly</span><span><Users/> Made for families</span></div></div><div className="seedfloat"><Sprout/><span>Today’s seed</span><b>Kind words grow<br/>beautiful hearts</b></div></section><section className="today wrap"><div className="sectionHead"><div><span className="kicker">A LITTLE GOODNESS, EVERY DAY</span><h2>Today’s Seed 🌱</h2></div><p>A tiny lesson to learn, reflect on and carry into your day.</p></div><div className="todayCard"><div className="quoteMark">“</div><div><span className="badge">HADITH OF THE DAY</span><p className="arabic">{items[0].arabic}</p><h3>“Your smile for your brother is charity.”</h3><p>A smile costs nothing, but it can brighten someone’s heart. Try greeting your family with a warm smile.</p><div className="meta"><span><ShieldCheck/> {items[0].source}</span><span><Clock/> 4 min read</span></div></div><button className="round" onClick={()=>go('/hadith/a-smile-is-charity')}><ArrowRight/></button></div></section><GardenGrid/><FeatureBand/><HomeContent/></>}
-function GardenGrid(){return <section className="wrap choose"><div className="sectionHead center"><div><span className="kicker">CHOOSE A PATH</span><h2>Where will you grow today?</h2></div><p>Every garden holds something beautiful to discover.</p></div><div className="gardenGrid">{['quran','hadith','seerah','character','duas','sunnah'].map((k,i)=><button className={'gardenCard g'+i} onClick={()=>go('/'+k)}><span className="bigIcon">{sections[k].icon}</span><span className="mini">{sections[k].eyebrow}</span><h3>{sections[k].title}</h3><p>{sections[k].desc}</p><b>Explore garden <ArrowRight/></b></button>)}</div></section>}
-function FeatureBand(){return <section className="littleBand"><div className="kidscene"><div className="tree">♧</div><div className="child">🧕🏽</div><div className="flowers">✿ · ✿</div></div><div className="bandcopy"><span className="kicker pale">MADE FOR CURIOUS LITTLE HEARTS</span><h2>Welcome, Little Seeds!</h2><p>Join Maryam, Zayd, Hasan and Safiyyah for stories, duas and adventures that make Islamic learning feel full of wonder.</p><div className="actions"><button className="cream" onClick={()=>go('/kids')}>Enter the kids’ garden <ArrowRight/></button><span>Perfect for ages 4–10</span></div></div></section>}
-function HomeContent(){return <section className="wrap latest"><div className="sectionHead"><div><span className="kicker">FRESH FROM THE GARDEN</span><h2>Keep discovering</h2></div></div><div className="cards">{items.slice(1,5).map(x=><ContentCard item={x}/>)}</div><div className="familyCta"><div><span className="kicker">GROW TOGETHER</span><h2>For parents & educators</h2><p>Discussion prompts, guided learning paths and printable activities.</p></div><button className="primary" onClick={()=>go('/parents')}>Visit parent space <ArrowRight/></button></div></section>}
-function ContentCard({item}){return <article className="contentCard" onClick={()=>go('/'+item.type+'/'+item.id)}><div className={'cardpic '+item.type}><span>{sections[item.type]?.icon||'🌿'}</span><button className="save" onClick={e=>{e.stopPropagation();e.currentTarget.classList.toggle('saved')}}><Bookmark/></button></div><div className="cardbody"><span className="tag">{item.tag}</span><h3>{item.title}</h3><p>{item.excerpt}</p><div className="meta"><span>{item.age}</span><span>•</span><span>{item.time}</span></div></div></article>}
-function Listing({kind}){let s=sections[kind],data=items.filter(x=>x.type===kind);if(data.length<3)data=[...data,...items.slice(0,3-data.length)];return <><section className="pageHero" style={{'--tint':s.color}}><div><span className="kicker">{s.eyebrow}</span><h1>{s.title} <i>{s.icon}</i></h1><p>{s.desc}</p></div><div className="heroGlyph">{s.icon}</div></section><section className="wrap listing"><div className="filterrow"><div className="searchfield"><Search/><input placeholder={'Search '+s.title.toLowerCase()}/></div><button><Filter/> Filter</button><button>All ages <ChevronRight/></button></div><div className="sectionHead"><div><h2>Explore the garden</h2><p>Authentic, reviewed lessons for meaningful learning.</p></div></div><div className="cards three">{data.map((x,i)=><ContentCard key={i} item={x}/>)}</div></section></>}
-function Detail({item}){const[done,setDone]=useState(false);return <><section className="detailHero"><button className="back" onClick={()=>history.back()}>← Back to the garden</button><span className="tag">{item.tag}</span><h1>{item.title}</h1><p>{item.excerpt}</p><div className="meta"><span>{item.age}</span><span>•</span><span>{item.time}</span><span>•</span><span>{item.id}</span></div></section><article className="lesson"><aside><div className="toc"><b>In this lesson</b><a href="#learn">Learn</a><a href="#understand">Understand</a><a href="#reflect">Reflect</a><a href="#practice">Practice</a></div></aside><div className="lessonbody">{item.arabic&&<div className="arabicPanel"><p className="arabic">{item.arabic}</p><button><Volume2/> Listen</button></div>}<section id="learn"><span className="step">01 · LEARN</span><h2>A small seed of goodness</h2><p>Islam teaches us that beautiful character appears in the small choices we make each day. A kind word, an honest answer, and a helpful hand can all become acts of worship.</p></section><section id="understand"><span className="step">02 · UNDERSTAND</span><h2>What does this mean?</h2><p>Goodness is accessible to everyone. We can begin exactly where we are, with the people around us.</p><div className="sourcebox"><ShieldCheck/><div><b>Source & review</b><p>{item.source}. Reviewed for educational use.</p></div></div></section><section id="reflect"><span className="step">03 · REFLECT</span><h2>Pause and wonder</h2><div className="prompt">When has someone’s kindness made your day better?</div></section><section id="practice"><span className="step">04 · PRACTICE</span><h2>Grow it today</h2><p>Choose one person and offer them a sincere act of kindness.</p><button className={done?'complete done':'complete'} onClick={()=>setDone(!done)}>{done?<><CheckCircle2/> Seed planted!</>:<><Sprout/> I practised this</>}</button>{done&&<div className="grown">🌱 <b>Your garden grew a new sprout.</b></div>}</section></div><aside><button className="share"><Bookmark/> Save lesson</button><button className="share"><Share2/> Share</button></aside></article></>}
+import React, { useEffect, useState } from "react";
+import { createRoot } from "react-dom/client";
+import {
+  Menu,
+  X,
+  Search,
+  Bookmark,
+  ArrowRight,
+  BookOpen,
+  Heart,
+  Sprout,
+  ShieldCheck,
+  Clock,
+  ChevronRight,
+  Home,
+  FileText,
+  Library,
+  Video,
+  Image,
+  Users,
+  BarChart3,
+  Settings,
+  CheckCircle2,
+  AlertTriangle,
+  Plus,
+  MoreHorizontal,
+  Eye,
+  CalendarDays,
+  Share2,
+  Volume2,
+  Download,
+  Filter,
+  GraduationCap,
+  Globe2,
+} from "lucide-react";
+import "./styles.css";
+const sections = {
+  sunnah: {
+    title: "Sunnah Garden",
+    eyebrow: "Live beautifully",
+    icon: "🌱",
+    desc: "Small, authentic Prophetic practices for every part of your day.",
+    color: "#dff3d8",
+  },
+  hadith: {
+    title: "Hadith Garden",
+    eyebrow: "Words of guidance",
+    icon: "📜",
+    desc: "Authentic narrations, clearly sourced and gently explained.",
+    color: "#fff1cf",
+  },
+  quran: {
+    title: "Qur’an Garden",
+    eyebrow: "Words of Allah",
+    icon: "📖",
+    desc: "Read, understand and reflect on lessons from the Qur’an.",
+    color: "#dcefea",
+  },
+  seerah: {
+    title: "Seerah Garden",
+    eyebrow: "Walk through history",
+    icon: "🕋",
+    desc: "A respectful, source-conscious journey through the life of Rasulullah ﷺ.",
+    color: "#f1e4d2",
+  },
+  character: {
+    title: "Character Garden",
+    eyebrow: "Grow what is within",
+    icon: "♥",
+    desc: "Learn the beautiful qualities that bring faith into everyday life.",
+    color: "#fae3df",
+  },
+  duas: {
+    title: "Du‘a Garden",
+    eyebrow: "Remember Allah",
+    icon: "🤲",
+    desc: "Authentic supplications for the moments that make up a day.",
+    color: "#e3e1f5",
+  },
+  stories: {
+    title: "Islamic Stories",
+    eyebrow: "Stories with roots",
+    icon: "☾",
+    desc: "Gentle, meaningful stories grounded in Islamic values.",
+    color: "#e9e0cd",
+  },
+  books: {
+    title: "Sunna Seed Library",
+    eyebrow: "Open a world of learning",
+    icon: "📚",
+    desc: "Books and resources for little learners, families and educators.",
+    color: "#f4dfc4",
+  },
+  videos: {
+    title: "Video Library",
+    eyebrow: "Watch & wonder",
+    icon: "▶",
+    desc: "Thoughtful Islamic learning, one episode at a time.",
+    color: "#d9ebe4",
+  },
+  articles: {
+    title: "Sunna Seed Journal",
+    eyebrow: "For thoughtful families",
+    icon: "✦",
+    desc: "Ideas, guidance and reflections for nurturing young Muslims.",
+    color: "#e2ead6",
+  },
+  series: {
+    title: "Learning Paths",
+    eyebrow: "Step by gentle step",
+    icon: "🧭",
+    desc: "Structured journeys that turn discovery into lasting practice.",
+    color: "#dbe8cf",
+  },
+  resources: {
+    title: "Family Resources",
+    eyebrow: "Learn together",
+    icon: "✂",
+    desc: "Printable activities, reflection sheets and classroom materials.",
+    color: "#faeccf",
+  },
+  parents: {
+    title: "Parent & Educator Space",
+    eyebrow: "Help their garden grow",
+    icon: "⌂",
+    desc: "Practical tools for meaningful Islamic learning at home and school.",
+    color: "#dfebe7",
+  },
+};
+const items = [
+  {
+    id: "SS-HAD-0001",
+    type: "hadith",
+    title: "A Smile is Charity",
+    excerpt: "Even the smallest kindness can carry great weight.",
+    age: "All ages",
+    time: "4 min",
+    source: "Jamiʿ at-Tirmidhi 1956",
+    arabic: "تَبَسُّمُكَ فِي وَجْهِ أَخِيكَ لَكَ صَدَقَةٌ",
+    tag: "Kindness",
+  },
+  {
+    id: "SS-SEA-0001",
+    type: "seerah",
+    title: "The Trustworthy One",
+    excerpt: "Why the people of Makkah called Rasulullah ﷺ Al-Amīn.",
+    age: "7–12",
+    time: "7 min",
+    source: "Seerah sources reviewed",
+    tag: "Trustworthiness",
+  },
+  {
+    id: "SS-QUR-0001",
+    type: "quran",
+    title: "Speak Words of Goodness",
+    excerpt: "A garden lesson from Surah Al-Baqarah about how we speak.",
+    age: "8–14",
+    time: "6 min",
+    source: "Qur’an 2:83",
+    arabic: "وَقُولُوا لِلنَّاسِ حُسْنًا",
+    tag: "Good speech",
+  },
+  {
+    id: "SS-CHAR-0001",
+    type: "character",
+    title: "The Courage to Tell the Truth",
+    excerpt: "Truthfulness is a seed that grows into trust.",
+    age: "6–11",
+    time: "5 min",
+    source: "Sahih Muslim 2607",
+    tag: "Truthfulness",
+  },
+  {
+    id: "SS-KID-0001",
+    type: "stories",
+    title: "Maryam and the Lost Pencil Case",
+    excerpt: "Maryam finds something that is not hers and learns about amanah.",
+    age: "5–9",
+    time: "8 min",
+    source: "Fictional teaching story",
+    tag: "Amanah",
+  },
+  {
+    id: "SS-DUA-0001",
+    type: "duas",
+    title: "Before We Eat",
+    excerpt: "Remembering Allah before enjoying our food.",
+    age: "All ages",
+    time: "2 min",
+    source: "Sunan Abi Dawud 3767",
+    arabic: "بِسْمِ اللَّهِ",
+    tag: "Daily du‘a",
+  },
+  {
+    id: "SS-SUN-0001",
+    type: "sunnah",
+    title: "Begin with the Right",
+    excerpt: "A simple Sunnah to remember while getting ready.",
+    age: "5–10",
+    time: "3 min",
+    source: "Sahih al-Bukhari 168",
+    tag: "Daily Sunnah",
+  },
+  {
+    id: "SS-BOOK-0001",
+    type: "books",
+    title: "My First Garden of Manners",
+    excerpt: "Seven beautifully illustrated lessons for growing hearts.",
+    age: "4–8",
+    time: "32 pages",
+    source: "Sunna Seed Press",
+    tag: "Children’s book",
+  },
+  {
+    id: "SS-VID-0001",
+    type: "videos",
+    title: "What Makes a Good Neighbour?",
+    excerpt: "Zayd and Safiyyah discover a beautiful teaching.",
+    age: "6–12",
+    time: "06:24",
+    source: "Sunna Seed Studio",
+    tag: "Little Seeds",
+  },
+  {
+    id: "SS-ART-0001",
+    type: "articles",
+    title: "Making Islamic Learning Feel Natural at Home",
+    excerpt: "Five gentle rhythms for growing a home of remembrance.",
+    age: "Parents",
+    time: "6 min",
+    source: "Editorial review",
+    tag: "Family learning",
+  },
+];
+const nav = [
+  ["Sunnah", "/sunnah"],
+  ["Hadith", "/hadith"],
+  ["Qur’an", "/quran"],
+  ["Seerah", "/seerah"],
+  ["Little Seeds", "/kids"],
+  ["Library", "/books"],
+];
+function go(p) {
+  history.pushState({}, "", p);
+  dispatchEvent(new PopStateEvent("popstate"));
+  scrollTo({ top: 0, behavior: "smooth" });
+}
+function App() {
+  const [p, setP] = useState(location.pathname),
+    [menu, setMenu] = useState(false),
+    [search, setSearch] = useState(false);
+  useEffect(() => {
+    let f = () => setP(location.pathname);
+    addEventListener("popstate", f);
+    return () => removeEventListener("popstate", f);
+  }, []);
+  return (
+    <>
+      <a className="skip" href="#main">
+        Skip to content
+      </a>
+      {p.startsWith("/admin") ? (
+        <Admin route={p} />
+      ) : (
+        <>
+          <Header
+            menu={menu}
+            setMenu={setMenu}
+            openSearch={() => setSearch(true)}
+          />
+          <main id="main">
+            <Router route={p} />
+          </main>
+          <Footer />
+        </>
+      )}
+      {search && <SearchOverlay close={() => setSearch(false)} />}
+    </>
+  );
+}
+function Header({ menu, setMenu, openSearch }) {
+  return (
+    <header className="nav">
+      <button className="brand" onClick={() => go("/")}>
+        <span className="brandmark">
+          <Sprout />
+        </span>
+        <span>
+          SUNNA SEED<small>PROJECT</small>
+        </span>
+      </button>
+      <nav className={menu ? "open" : ""}>
+        {nav.map(([n, p]) => (
+          <button
+            key={p}
+            onClick={() => {
+              go(p);
+              setMenu(false);
+            }}
+          >
+            {n}
+          </button>
+        ))}
+        <button onClick={() => go("/parents")}>Parents</button>
+      </nav>
+      <div className="navtools">
+        <button className="iconbtn" onClick={openSearch}>
+          <Search />
+        </button>
+        <button className="startbtn" onClick={() => go("/start")}>
+          Start learning <ArrowRight />
+        </button>
+        <button className="menubtn iconbtn" onClick={() => setMenu(!menu)}>
+          {menu ? <X /> : <Menu />}
+        </button>
+      </div>
+    </header>
+  );
+}
+function Router({ route }) {
+  if (route === "/") return <HomePage />;
+  if (route === "/start") return <Start />;
+  if (route === "/kids") return <Kids />;
+  if (["/about", "/contact", "/social"].includes(route))
+    return <InfoPage kind={route.slice(1)} />;
+  let [key, slug] = route.split("/").filter(Boolean);
+  if (slug)
+    return <Detail item={items.find((x) => x.type === key) || items[0]} />;
+  if (sections[key]) return <Listing kind={key} />;
+  return <NotFound />;
+}
+function HomePage() {
+  return (
+    <>
+      <section className="hero">
+        <div className="heroart">
+          <div className="sun" />
+          <div className="mount m1" />
+          <div className="mount m2" />
+          <div className="dome">
+            <i />
+          </div>
+          <div className="water" />
+        </div>
+        <div className="heroCopy">
+          <span className="pill light">
+            <Sprout /> A living garden of Islamic knowledge
+          </span>
+          <h1>
+            Plant the Sunnah.
+            <br />
+            <em>Grow the Ummah.</em>
+          </h1>
+          <p>
+            Discover the Qur’an, authentic Sunnah, Seerah and beautiful lessons
+            made to grow with the next generation.
+          </p>
+          <div className="actions">
+            <button className="primary" onClick={() => go("/start")}>
+              Start learning <ArrowRight />
+            </button>
+            <button className="secondary" onClick={() => go("/sunnah")}>
+              Explore the garden
+            </button>
+          </div>
+          <div className="trust">
+            <span>
+              <ShieldCheck /> Source-conscious
+            </span>
+            <span>
+              <Heart /> Child-friendly
+            </span>
+            <span>
+              <Users /> Made for families
+            </span>
+          </div>
+        </div>
+        <div className="seedfloat">
+          <Sprout />
+          <span>Today’s seed</span>
+          <b>
+            Kind words grow
+            <br />
+            beautiful hearts
+          </b>
+        </div>
+      </section>
+      <section className="today wrap">
+        <div className="sectionHead">
+          <div>
+            <span className="kicker">A LITTLE GOODNESS, EVERY DAY</span>
+            <h2>Today’s Seed 🌱</h2>
+          </div>
+          <p>A tiny lesson to learn, reflect on and carry into your day.</p>
+        </div>
+        <div className="todayCard">
+          <div className="quoteMark">“</div>
+          <div>
+            <span className="badge">HADITH OF THE DAY</span>
+            <p className="arabic">{items[0].arabic}</p>
+            <h3>“Your smile for your brother is charity.”</h3>
+            <p>
+              A smile costs nothing, but it can brighten someone’s heart. Try
+              greeting your family with a warm smile.
+            </p>
+            <div className="meta">
+              <span>
+                <ShieldCheck /> {items[0].source}
+              </span>
+              <span>
+                <Clock /> 4 min read
+              </span>
+            </div>
+          </div>
+          <button
+            className="round"
+            onClick={() => go("/hadith/a-smile-is-charity")}
+          >
+            <ArrowRight />
+          </button>
+        </div>
+      </section>
+      <GardenGrid />
+      <FeatureBand />
+      <HomeContent />
+    </>
+  );
+}
+function GardenGrid() {
+  return (
+    <section className="wrap choose">
+      <div className="sectionHead center">
+        <div>
+          <span className="kicker">CHOOSE A PATH</span>
+          <h2>Where will you grow today?</h2>
+        </div>
+        <p>Every garden holds something beautiful to discover.</p>
+      </div>
+      <div className="gardenGrid">
+        {["quran", "hadith", "seerah", "character", "duas", "sunnah"].map(
+          (k, i) => (
+            <button className={"gardenCard g" + i} onClick={() => go("/" + k)}>
+              <span className="bigIcon">{sections[k].icon}</span>
+              <span className="mini">{sections[k].eyebrow}</span>
+              <h3>{sections[k].title}</h3>
+              <p>{sections[k].desc}</p>
+              <b>
+                Explore garden <ArrowRight />
+              </b>
+            </button>
+          ),
+        )}
+      </div>
+    </section>
+  );
+}
+function FeatureBand() {
+  return (
+    <section className="littleBand">
+      <div className="kidscene">
+        <div className="tree">♧</div>
+        <div className="child">🧕🏽</div>
+        <div className="flowers">✿ · ✿</div>
+      </div>
+      <div className="bandcopy">
+        <span className="kicker pale">MADE FOR CURIOUS LITTLE HEARTS</span>
+        <h2>Welcome, Little Seeds!</h2>
+        <p>
+          Join Maryam, Zayd, Hasan and Safiyyah for stories, duas and adventures
+          that make Islamic learning feel full of wonder.
+        </p>
+        <div className="actions">
+          <button className="cream" onClick={() => go("/kids")}>
+            Enter the kids’ garden <ArrowRight />
+          </button>
+          <span>Perfect for ages 4–10</span>
+        </div>
+      </div>
+    </section>
+  );
+}
+function HomeContent() {
+  return (
+    <section className="wrap latest">
+      <div className="sectionHead">
+        <div>
+          <span className="kicker">FRESH FROM THE GARDEN</span>
+          <h2>Keep discovering</h2>
+        </div>
+      </div>
+      <div className="cards">
+        {items.slice(1, 5).map((x) => (
+          <ContentCard item={x} />
+        ))}
+      </div>
+      <div className="familyCta">
+        <div>
+          <span className="kicker">GROW TOGETHER</span>
+          <h2>For parents & educators</h2>
+          <p>
+            Discussion prompts, guided learning paths and printable activities.
+          </p>
+        </div>
+        <button className="primary" onClick={() => go("/parents")}>
+          Visit parent space <ArrowRight />
+        </button>
+      </div>
+    </section>
+  );
+}
+function ContentCard({ item }) {
+  return (
+    <article
+      className="contentCard"
+      onClick={() => go("/" + item.type + "/" + item.id)}
+    >
+      <div className={"cardpic " + item.type}>
+        <span>{sections[item.type]?.icon || "🌿"}</span>
+        <button
+          className="save"
+          onClick={(e) => {
+            e.stopPropagation();
+            e.currentTarget.classList.toggle("saved");
+          }}
+        >
+          <Bookmark />
+        </button>
+      </div>
+      <div className="cardbody">
+        <span className="tag">{item.tag}</span>
+        <h3>{item.title}</h3>
+        <p>{item.excerpt}</p>
+        <div className="meta">
+          <span>{item.age}</span>
+          <span>•</span>
+          <span>{item.time}</span>
+        </div>
+      </div>
+    </article>
+  );
+}
+function Listing({ kind }) {
+  let s = sections[kind],
+    data = items.filter((x) => x.type === kind);
+  if (data.length < 3) data = [...data, ...items.slice(0, 3 - data.length)];
+  return (
+    <>
+      <section className="pageHero" style={{ "--tint": s.color }}>
+        <div>
+          <span className="kicker">{s.eyebrow}</span>
+          <h1>
+            {s.title} <i>{s.icon}</i>
+          </h1>
+          <p>{s.desc}</p>
+        </div>
+        <div className="heroGlyph">{s.icon}</div>
+      </section>
+      <section className="wrap listing">
+        <div className="filterrow">
+          <div className="searchfield">
+            <Search />
+            <input placeholder={"Search " + s.title.toLowerCase()} />
+          </div>
+          <button>
+            <Filter /> Filter
+          </button>
+          <button>
+            All ages <ChevronRight />
+          </button>
+        </div>
+        <div className="sectionHead">
+          <div>
+            <h2>Explore the garden</h2>
+            <p>Authentic, reviewed lessons for meaningful learning.</p>
+          </div>
+        </div>
+        <div className="cards three">
+          {data.map((x, i) => (
+            <ContentCard key={i} item={x} />
+          ))}
+        </div>
+      </section>
+    </>
+  );
+}
+function Detail({ item }) {
+  const [done, setDone] = useState(false);
+  return (
+    <>
+      <section className="detailHero">
+        <button className="back" onClick={() => history.back()}>
+          ← Back to the garden
+        </button>
+        <span className="tag">{item.tag}</span>
+        <h1>{item.title}</h1>
+        <p>{item.excerpt}</p>
+        <div className="meta">
+          <span>{item.age}</span>
+          <span>•</span>
+          <span>{item.time}</span>
+          <span>•</span>
+          <span>{item.id}</span>
+        </div>
+      </section>
+      <article className="lesson">
+        <aside>
+          <div className="toc">
+            <b>In this lesson</b>
+            <a href="#learn">Learn</a>
+            <a href="#understand">Understand</a>
+            <a href="#reflect">Reflect</a>
+            <a href="#practice">Practice</a>
+          </div>
+        </aside>
+        <div className="lessonbody">
+          {item.arabic && (
+            <div className="arabicPanel">
+              <p className="arabic">{item.arabic}</p>
+              <button>
+                <Volume2 /> Listen
+              </button>
+            </div>
+          )}
+          <section id="learn">
+            <span className="step">01 · LEARN</span>
+            <h2>A small seed of goodness</h2>
+            <p>
+              Islam teaches us that beautiful character appears in the small
+              choices we make each day. A kind word, an honest answer, and a
+              helpful hand can all become acts of worship.
+            </p>
+          </section>
+          <section id="understand">
+            <span className="step">02 · UNDERSTAND</span>
+            <h2>What does this mean?</h2>
+            <p>
+              Goodness is accessible to everyone. We can begin exactly where we
+              are, with the people around us.
+            </p>
+            <div className="sourcebox">
+              <ShieldCheck />
+              <div>
+                <b>Source & review</b>
+                <p>{item.source}. Reviewed for educational use.</p>
+              </div>
+            </div>
+          </section>
+          <section id="reflect">
+            <span className="step">03 · REFLECT</span>
+            <h2>Pause and wonder</h2>
+            <div className="prompt">
+              When has someone’s kindness made your day better?
+            </div>
+          </section>
+          <section id="practice">
+            <span className="step">04 · PRACTICE</span>
+            <h2>Grow it today</h2>
+            <p>Choose one person and offer them a sincere act of kindness.</p>
+            <button
+              className={done ? "complete done" : "complete"}
+              onClick={() => setDone(!done)}
+            >
+              {done ? (
+                <>
+                  <CheckCircle2 /> Seed planted!
+                </>
+              ) : (
+                <>
+                  <Sprout /> I practised this
+                </>
+              )}
+            </button>
+            {done && (
+              <div className="grown">
+                🌱 <b>Your garden grew a new sprout.</b>
+              </div>
+            )}
+          </section>
+        </div>
+        <aside>
+          <button className="share">
+            <Bookmark /> Save lesson
+          </button>
+          <button className="share">
+            <Share2 /> Share
+          </button>
+        </aside>
+      </article>
+    </>
+  );
+}
 
-function Start(){let opts=[['I’m a child','Stories, duas and discoveries','🧒','/kids'],['I’m a parent','Grow faith together at home','👨‍👩‍👧','/parents'],['I’m an educator','Resources for meaningful lessons','👩‍🏫','/resources']];return <section className="startpage"><span className="pill"><Sprout/> Your journey begins here</span><h1>Who are you<br/><em>learning with?</em></h1><p>We’ll help you find the best path through the garden. No account needed.</p><div className="startopts">{opts.map(o=><button onClick={()=>go(o[3])}><span>{o[2]}</span><h2>{o[0]}</h2><p>{o[1]}</p><b>Choose this path <ArrowRight/></b></button>)}</div></section>}
-function Kids(){const[stage,setStage]=useState(+localStorage.getItem('gardenStage')||1);function grow(){let n=Math.min(stage+1,5);setStage(n);localStorage.setItem('gardenStage',n)}return <><section className="kidsHero"><div className="stars">· ✦ · ˚ · ✧ ·</div><span className="pill light">🌱 LITTLE SEEDS</span><h1>Big hearts start<br/>with <em>little seeds.</em></h1><p>Choose a path, discover something beautiful, and watch your garden grow!</p><div className="friends"><span>🧕🏽</span><span>👦🏾</span><span>👧🏽</span><span>👦🏽</span></div></section><section className="kidwrap"><div className="mygarden"><div><span className="kicker">MY LITTLE GARDEN</span><h2>Look what you’re growing!</h2><p>Learn and practise to help your garden bloom.</p><button className="cream" onClick={grow}>Plant today’s seed <Sprout/></button></div><div className={'growth stage'+stage}><div className="ground"/><span>{['','🌱','🌿','🪴','🌻','🌳'][stage]}</span><b>Stage {stage} of 5</b></div></div><h2 className="chooseTitle">What would you like to discover?</h2><div className="kidchoices">{[['📚','A story','stories'],['📜','A Hadith','hadith'],['🤲','A du‘a','duas'],['♥','Good manners','character'],['🕋','Seerah','seerah'],['📖','Qur’an','quran']].map(x=><button onClick={()=>go('/'+x[2])}><span>{x[0]}</span><b>{x[1]}</b><ArrowRight/></button>)}</div><div className="storySpot"><div className="storyart">🧕🏽<span>✦</span></div><div><span className="kicker">STORY OF THE WEEK</span><h2>Maryam and the Lost Pencil Case</h2><p>Maryam discovers a bright blue pencil case under her desk. What should she do? A gentle story about trust and doing what is right.</p><button className="primary" onClick={()=>go('/stories/maryam-and-the-lost-pencil-case')}>Read the story <BookOpen/></button></div></div></section></>}
-function InfoPage({kind}){let d=kind==='about'?['Growing a generation that loves the Sunnah','Sunna Seed is a digital learning garden helping children and families discover authentic Islamic knowledge with joy, care and beautiful design.']:kind==='contact'?['Let’s grow something good together','Questions, feedback or partnership ideas? Our team would love to hear from you.']:['Follow Sunna Seed','Find thoughtful reminders, new lessons and family resources on our official channels.'];return <section className="infoPage"><span className="pill"><Sprout/> SUNNA SEED PROJECT</span><h1>{d[0]}</h1><p>{d[1]}</p>{kind==='contact'?<form><label>Name<input placeholder="Your name"/></label><label>Email<input type="email" placeholder="you@example.com"/></label><label>Message<textarea placeholder="How can we help?"/></label><button className="primary">Send message <ArrowRight/></button></form>:<div className="values">{['Authentic & source-conscious','Gentle, child-centered learning','Beautifully useful for families'].map(x=><div><ShieldCheck/><b>{x}</b></div>)}</div>}</section>}
-function SearchOverlay({close}){const[q,setQ]=useState('');let found=items.filter(x=>(x.title+x.excerpt+x.tag).toLowerCase().includes(q.toLowerCase()));return <div className="overlay"><div className="searchmodal"><div className="searchtop"><Search/><input autoFocus value={q} onChange={e=>setQ(e.target.value)} placeholder="Search the whole garden…"/><button onClick={close}><X/></button></div><div className="quick"><span>Try:</span>{['mercy','du‘a','truthfulness','family'].map(x=><button onClick={()=>setQ(x)}>{x}</button>)}</div><div className="results">{q&&<span className="kicker">{found.length} RESULTS ACROSS THE GARDEN</span>}{(q?found:items.slice(0,4)).map(x=><button onClick={()=>{close();go('/'+x.type+'/'+x.id)}}><span>{sections[x.type]?.icon||'🌿'}</span><div><b>{x.title}</b><small>{sections[x.type]?.title} · {x.age}</small></div><ArrowRight/></button>)}</div></div></div>}
-const adminNav=[[Home,'Dashboard','/admin'],[FileText,'Content','/admin/content'],[CheckCircle2,'Review','/admin/review'],[Library,'Books','/admin/books'],[Video,'Videos','/admin/videos'],[Image,'Media','/admin/media'],[GraduationCap,'Learning','/admin/learning'],[Globe2,'Social','/admin/social'],[Users,'Users','/admin/users'],[BarChart3,'Analytics','/admin/analytics'],[Settings,'Settings','/admin/settings']];
-function Admin({route}){const[collapsed,setCollapsed]=useState(false);const[create,setCreate]=useState(false);let label=adminNav.find(x=>x[2]===route)?.[1]||'Content';return <div className="admin"><aside className={collapsed?'adminside collapsed':'adminside'}><button className="adminbrand" onClick={()=>setCollapsed(!collapsed)}><span><Sprout/></span><b>SUNNA SEED<small>ADMIN OS</small></b></button><nav>{adminNav.map(([I,n,p])=><button className={route===p?'active':''} onClick={()=>go(p)}><I/><span>{n}</span>{n==='Review'&&<i>6</i>}</button>)}</nav><div className="adminuser"><span>FA</span><div><b>Fatimah A.</b><small>Content Admin</small></div><MoreHorizontal/></div></aside><main className="adminmain"><header><div><span className="crumb">Admin OS / {label}</span><h1>{label}</h1></div><div><button className="iconbtn"><Search/></button><button className="iconbtn"><span className="dot"/>◔</button><button className="admincreate" onClick={()=>setCreate(true)}><Plus/> Create new</button></div></header>{route==='/admin'?<Dashboard/>:route==='/admin/content'?<AdminContent/>:route==='/admin/review'?<Review/>:<AdminPlaceholder label={label}/>}</main>{create&&<CreateModal close={()=>setCreate(false)}/>}</div>}
-function Dashboard(){return <><section className="welcome"><div><span>Wednesday, 30 September</span><h2>Assalāmu ‘alaykum, Fatimah 🌱</h2><p>Here’s what’s growing across Sunna Seed today.</p></div><button><Eye/> View public site</button></section><div className="statgrid">{[['Published','248','+12 this month',FileText],['Awaiting review','18','6 need source review',Clock],['Garden learners','3,842','+8.4% this month',Users],['Resource downloads','1,206','+14% this month',Download]].map(([a,b,c,I])=><div><span><I/></span><small>{a}</small><b>{b}</b><p>{c}</p></div>)}</div><div className="admincolumns"><section className="panel"><div className="panelhead"><div><h3>Needs your attention</h3><p>Items waiting in the editorial workflow</p></div><button onClick={()=>go('/admin/review')}>View queue <ArrowRight/></button></div>{[['Hadith','The Best Among You','Islamic source review','high'],['Qur’an','Lessons from Surah Al-‘Asr','Translation check','high'],['Story','Hasan’s Helpful Hands','Visual review',''],['Article','Ramadan Rhythms for Families','Editorial review','']].map(x=><div className="queue"><span className={'type '+x[0]}>{x[0][0]}</span><div><b>{x[1]}</b><small>{x[2]}</small></div>{x[3]&&<AlertTriangle/>}<button>Review</button></div>)}</section><section className="panel activity"><div className="panelhead"><div><h3>Recent activity</h3><p>Latest changes across the CMS</p></div></div>{[['Published','A Smile is Charity','12 min ago'],['Source approved','Morning Adhkar','34 min ago'],['Updated','My First Garden of Manners','1 hr ago'],['Scheduled','Friday Family Reflection','2 hrs ago']].map(x=><div><CheckCircle2/><p><b>{x[0]}</b> · {x[1]}<small>{x[2]}</small></p></div>)}</section></div><section className="panel schedule"><div className="panelhead"><div><h3>Publishing schedule</h3><p>Upcoming content</p></div><button><CalendarDays/> Open calendar</button></div><div className="timeline">{['TODAY','OCT 01','OCT 03','OCT 05'].map((x,i)=><div><b>{x}</b><span/><p>{['Good Words Grow','Du‘a Before Sleeping','The Trustworthy One','Family Reflection'][i]}<small>{['Hadith · 16:00','Du‘a · 08:00','Seerah · 10:00','Article · 09:30'][i]}</small></p></div>)}</div></section></>}
-function AdminContent(){return <section className="panel contentPanel"><div className="contenttools"><div className="searchfield"><Search/><input placeholder="Search title, ID, source…"/></div><button><Filter/> Filters</button><button>All statuses <ChevronRight/></button></div><div className="tabs"><button className="active">All content <i>284</i></button><button>Published</button><button>Drafts</button><button>In review</button><button>Scheduled</button></div><table><thead><tr><th>Content</th><th>Type</th><th>Status</th><th>Owner</th><th>Updated</th><th></th></tr></thead><tbody>{items.slice(0,7).map((x,i)=><tr><td><span className="tabletitle">{sections[x.type]?.icon}<span><b>{x.title}</b><small>{x.id}</small></span></span></td><td>{sections[x.type]?.title.replace(' Garden','')}</td><td><span className={'status s'+i%4}>{['Published','In source review','Draft','Scheduled'][i%4]}</span></td><td>{['Fatimah A.','Umar K.','Maryam S.'][i%3]}</td><td>{i+1}h ago</td><td><MoreHorizontal/></td></tr>)}</tbody></table></section>}
-function Review(){return <><div className="reviewIntro"><div><h2>Review queue</h2><p>Every lesson passes through careful editorial and Islamic source review.</p></div><div className="workflow"><span className="done">Draft</span><i/><span className="active">Editorial</span><i/><span>Islamic source</span><i/><span>Visual</span><i/><span>Approved</span></div></div><section className="panel"><div className="warning"><AlertTriangle/><div><b>6 items require Islamic source review</b><p>Publication is blocked until source metadata and reviewer approval are complete.</p></div></div>{items.slice(0,5).map((x,i)=><div className="reviewrow"><span className="type Hadith">{sections[x.type]?.icon}</span><div><small>{x.id} · {sections[x.type]?.title}</small><b>{x.title}</b><p>{i<2?'⚠ Missing reviewer approval':'Ready for next review stage'}</p></div><span className="age">{x.age}</span><button>Open review <ArrowRight/></button></div>)}</section></>}
-function AdminPlaceholder({label}){return <section className="panel placeholder"><span><Sprout/></span><h2>{label} workspace</h2><p>Manage {label.toLowerCase()} with source-conscious controls, permissions and a complete audit trail.</p><button className="admincreate"><Plus/> Add {label.toLowerCase()}</button></section>}
-function CreateModal({close}){const[type,setType]=useState('Hadith');return <div className="overlay"><div className="createModal"><div className="modalhead"><div><span className="kicker">NEW CONTENT</span><h2>Plant something meaningful</h2></div><button onClick={close}><X/></button></div><label>Content type<select value={type} onChange={e=>setType(e.target.value)}>{['Hadith','Qur’an lesson','Seerah lesson','Sunnah lesson','Du‘a','Character lesson','Children’s story','Article'].map(x=><option>{x}</option>)}</select></label><label>Title<input placeholder="Enter a clear, helpful title"/></label><div className="formrow"><label>Age group<select><option>All ages</option><option>4–7</option><option>8–12</option></select></label><label>Language<select><option>English</option><option>Arabic</option><option>Hausa</option><option>French</option></select></label></div>{type==='Hadith'&&<div className="required"><ShieldCheck/><div><b>Source fields are mandatory</b><p>Collection, book, reference number, Arabic text, translation and authenticity grading must be completed before publication.</p></div></div>}<div className="modalactions"><button onClick={close}>Cancel</button><button className="admincreate" onClick={close}>Create draft <ArrowRight/></button></div></div></div>}
-function Footer(){return <footer><div className="footerbrand"><span className="brandmark"><Sprout/></span><div><b>SUNNA SEED PROJECT</b><p>Plant the Sunnah. Grow the Ummah.</p></div></div><div className="footlinks">{[['Explore',['Start Here','Sunnah','Hadith','Qur’an','Seerah']],['Discover',['Little Seeds','Books','Videos','Articles','Resources']],['About',['Our story','Parents','Social Media','Contact','Admin']]].map(([h,ls])=><div><b>{h}</b>{ls.map(x=><button onClick={()=>go(x==='Admin'?'/admin':'/'+x.toLowerCase().replaceAll(' ','-'))}>{x}</button>)}</div>)}</div><div className="footerbottom"><span>© 2026 Sunna Seed Project</span><span>Made with care for the Ummah 🌱</span><span>Privacy · Terms · Accessibility</span></div></footer>}
-function NotFound(){return <section className="infoPage"><span>🌱</span><h1>This path is still growing.</h1><p>Let’s return to the garden and discover something beautiful.</p><button className="primary" onClick={()=>go('/')}>Back home</button></section>}
-createRoot(document.getElementById('root')).render(<App/>);
+function Start() {
+  let opts = [
+    ["I’m a child", "Stories, duas and discoveries", "🧒", "/kids"],
+    ["I’m a parent", "Grow faith together at home", "👨‍👩‍👧", "/parents"],
+    ["I’m an educator", "Resources for meaningful lessons", "👩‍🏫", "/resources"],
+  ];
+  return (
+    <section className="startpage">
+      <span className="pill">
+        <Sprout /> Your journey begins here
+      </span>
+      <h1>
+        Who are you
+        <br />
+        <em>learning with?</em>
+      </h1>
+      <p>
+        We’ll help you find the best path through the garden. No account needed.
+      </p>
+      <div className="startopts">
+        {opts.map((o) => (
+          <button onClick={() => go(o[3])}>
+            <span>{o[2]}</span>
+            <h2>{o[0]}</h2>
+            <p>{o[1]}</p>
+            <b>
+              Choose this path <ArrowRight />
+            </b>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+function Kids() {
+  const [stage, setStage] = useState(+localStorage.getItem("gardenStage") || 1);
+  function grow() {
+    let n = Math.min(stage + 1, 5);
+    setStage(n);
+    localStorage.setItem("gardenStage", n);
+  }
+  return (
+    <>
+      <section className="kidsHero">
+        <div className="stars">· ✦ · ˚ · ✧ ·</div>
+        <span className="pill light">🌱 LITTLE SEEDS</span>
+        <h1>
+          Big hearts start
+          <br />
+          with <em>little seeds.</em>
+        </h1>
+        <p>
+          Choose a path, discover something beautiful, and watch your garden
+          grow!
+        </p>
+        <div className="friends">
+          <span>🧕🏽</span>
+          <span>👦🏾</span>
+          <span>👧🏽</span>
+          <span>👦🏽</span>
+        </div>
+      </section>
+      <section className="kidwrap">
+        <div className="mygarden">
+          <div>
+            <span className="kicker">MY LITTLE GARDEN</span>
+            <h2>Look what you’re growing!</h2>
+            <p>Learn and practise to help your garden bloom.</p>
+            <button className="cream" onClick={grow}>
+              Plant today’s seed <Sprout />
+            </button>
+          </div>
+          <div className={"growth stage" + stage}>
+            <div className="ground" />
+            <span>{["", "🌱", "🌿", "🪴", "🌻", "🌳"][stage]}</span>
+            <b>Stage {stage} of 5</b>
+          </div>
+        </div>
+        <h2 className="chooseTitle">What would you like to discover?</h2>
+        <div className="kidchoices">
+          {[
+            ["📚", "A story", "stories"],
+            ["📜", "A Hadith", "hadith"],
+            ["🤲", "A du‘a", "duas"],
+            ["♥", "Good manners", "character"],
+            ["🕋", "Seerah", "seerah"],
+            ["📖", "Qur’an", "quran"],
+          ].map((x) => (
+            <button onClick={() => go("/" + x[2])}>
+              <span>{x[0]}</span>
+              <b>{x[1]}</b>
+              <ArrowRight />
+            </button>
+          ))}
+        </div>
+        <div className="storySpot">
+          <div className="storyart">
+            🧕🏽<span>✦</span>
+          </div>
+          <div>
+            <span className="kicker">STORY OF THE WEEK</span>
+            <h2>Maryam and the Lost Pencil Case</h2>
+            <p>
+              Maryam discovers a bright blue pencil case under her desk. What
+              should she do? A gentle story about trust and doing what is right.
+            </p>
+            <button
+              className="primary"
+              onClick={() => go("/stories/maryam-and-the-lost-pencil-case")}
+            >
+              Read the story <BookOpen />
+            </button>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+function InfoPage({ kind }) {
+  let d =
+    kind === "about"
+      ? [
+          "Growing a generation that loves the Sunnah",
+          "Sunna Seed is a digital learning garden helping children and families discover authentic Islamic knowledge with joy, care and beautiful design.",
+        ]
+      : kind === "contact"
+        ? [
+            "Let’s grow something good together",
+            "Questions, feedback or partnership ideas? Our team would love to hear from you.",
+          ]
+        : [
+            "Follow Sunna Seed",
+            "Find thoughtful reminders, new lessons and family resources on our official channels.",
+          ];
+  return (
+    <section className="infoPage">
+      <span className="pill">
+        <Sprout /> SUNNA SEED PROJECT
+      </span>
+      <h1>{d[0]}</h1>
+      <p>{d[1]}</p>
+      {kind === "contact" ? (
+        <form>
+          <label>
+            Name
+            <input placeholder="Your name" />
+          </label>
+          <label>
+            Email
+            <input type="email" placeholder="you@example.com" />
+          </label>
+          <label>
+            Message
+            <textarea placeholder="How can we help?" />
+          </label>
+          <button className="primary">
+            Send message <ArrowRight />
+          </button>
+        </form>
+      ) : (
+        <div className="values">
+          {[
+            "Authentic & source-conscious",
+            "Gentle, child-centered learning",
+            "Beautifully useful for families",
+          ].map((x) => (
+            <div>
+              <ShieldCheck />
+              <b>{x}</b>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+function SearchOverlay({ close }) {
+  const [q, setQ] = useState("");
+  let found = items.filter((x) =>
+    (x.title + x.excerpt + x.tag).toLowerCase().includes(q.toLowerCase()),
+  );
+  return (
+    <div className="overlay">
+      <div className="searchmodal">
+        <div className="searchtop">
+          <Search />
+          <input
+            autoFocus
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search the whole garden…"
+          />
+          <button onClick={close}>
+            <X />
+          </button>
+        </div>
+        <div className="quick">
+          <span>Try:</span>
+          {["mercy", "du‘a", "truthfulness", "family"].map((x) => (
+            <button onClick={() => setQ(x)}>{x}</button>
+          ))}
+        </div>
+        <div className="results">
+          {q && (
+            <span className="kicker">
+              {found.length} RESULTS ACROSS THE GARDEN
+            </span>
+          )}
+          {(q ? found : items.slice(0, 4)).map((x) => (
+            <button
+              onClick={() => {
+                close();
+                go("/" + x.type + "/" + x.id);
+              }}
+            >
+              <span>{sections[x.type]?.icon || "🌿"}</span>
+              <div>
+                <b>{x.title}</b>
+                <small>
+                  {sections[x.type]?.title} · {x.age}
+                </small>
+              </div>
+              <ArrowRight />
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+const adminNav = [
+  [Home, "Dashboard", "/admin"],
+  [FileText, "Content", "/admin/content"],
+  [CheckCircle2, "Review", "/admin/review"],
+  [Library, "Books", "/admin/books"],
+  [Video, "Videos", "/admin/videos"],
+  [Image, "Media", "/admin/media"],
+  [GraduationCap, "Learning", "/admin/learning"],
+  [Globe2, "Social", "/admin/social"],
+  [Users, "Users", "/admin/users"],
+  [BarChart3, "Analytics", "/admin/analytics"],
+  [Settings, "Settings", "/admin/settings"],
+];
+function Admin({ route }) {
+  const [collapsed, setCollapsed] = useState(false);
+  const [create, setCreate] = useState(false);
+  let label = adminNav.find((x) => x[2] === route)?.[1] || "Content";
+  return (
+    <div className="admin">
+      <aside className={collapsed ? "adminside collapsed" : "adminside"}>
+        <button className="adminbrand" onClick={() => setCollapsed(!collapsed)}>
+          <span>
+            <Sprout />
+          </span>
+          <b>
+            SUNNA SEED<small>ADMIN OS</small>
+          </b>
+        </button>
+        <nav>
+          {adminNav.map(([I, n, p]) => (
+            <button
+              className={route === p ? "active" : ""}
+              onClick={() => go(p)}
+            >
+              <I />
+              <span>{n}</span>
+              {n === "Review" && <i>6</i>}
+            </button>
+          ))}
+        </nav>
+        <div className="adminuser">
+          <span>FA</span>
+          <div>
+            <b>Fatimah A.</b>
+            <small>Content Admin</small>
+          </div>
+          <MoreHorizontal />
+        </div>
+      </aside>
+      <main className="adminmain">
+        <header>
+          <div>
+            <span className="crumb">Admin OS / {label}</span>
+            <h1>{label}</h1>
+          </div>
+          <div>
+            <button className="iconbtn">
+              <Search />
+            </button>
+            <button className="iconbtn">
+              <span className="dot" />◔
+            </button>
+            <button className="admincreate" onClick={() => setCreate(true)}>
+              <Plus /> Create new
+            </button>
+          </div>
+        </header>
+        {route === "/admin" ? (
+          <Dashboard />
+        ) : route === "/admin/content" ? (
+          <AdminContent />
+        ) : route === "/admin/review" ? (
+          <Review />
+        ) : (
+          <AdminPlaceholder label={label} />
+        )}
+      </main>
+      {create && <CreateModal close={() => setCreate(false)} />}
+    </div>
+  );
+}
+function Dashboard() {
+  return (
+    <>
+      <section className="welcome">
+        <div>
+          <span>Wednesday, 30 September</span>
+          <h2>Assalāmu ‘alaykum, Fatimah 🌱</h2>
+          <p>Here’s what’s growing across Sunna Seed today.</p>
+        </div>
+        <button>
+          <Eye /> View public site
+        </button>
+      </section>
+      <div className="statgrid">
+        {[
+          ["Published", "248", "+12 this month", FileText],
+          ["Awaiting review", "18", "6 need source review", Clock],
+          ["Garden learners", "3,842", "+8.4% this month", Users],
+          ["Resource downloads", "1,206", "+14% this month", Download],
+        ].map(([a, b, c, I]) => (
+          <div>
+            <span>
+              <I />
+            </span>
+            <small>{a}</small>
+            <b>{b}</b>
+            <p>{c}</p>
+          </div>
+        ))}
+      </div>
+      <div className="admincolumns">
+        <section className="panel">
+          <div className="panelhead">
+            <div>
+              <h3>Needs your attention</h3>
+              <p>Items waiting in the editorial workflow</p>
+            </div>
+            <button onClick={() => go("/admin/review")}>
+              View queue <ArrowRight />
+            </button>
+          </div>
+          {[
+            ["Hadith", "The Best Among You", "Islamic source review", "high"],
+            [
+              "Qur’an",
+              "Lessons from Surah Al-‘Asr",
+              "Translation check",
+              "high",
+            ],
+            ["Story", "Hasan’s Helpful Hands", "Visual review", ""],
+            ["Article", "Ramadan Rhythms for Families", "Editorial review", ""],
+          ].map((x) => (
+            <div className="queue">
+              <span className={"type " + x[0]}>{x[0][0]}</span>
+              <div>
+                <b>{x[1]}</b>
+                <small>{x[2]}</small>
+              </div>
+              {x[3] && <AlertTriangle />}
+              <button>Review</button>
+            </div>
+          ))}
+        </section>
+        <section className="panel activity">
+          <div className="panelhead">
+            <div>
+              <h3>Recent activity</h3>
+              <p>Latest changes across the CMS</p>
+            </div>
+          </div>
+          {[
+            ["Published", "A Smile is Charity", "12 min ago"],
+            ["Source approved", "Morning Adhkar", "34 min ago"],
+            ["Updated", "My First Garden of Manners", "1 hr ago"],
+            ["Scheduled", "Friday Family Reflection", "2 hrs ago"],
+          ].map((x) => (
+            <div>
+              <CheckCircle2 />
+              <p>
+                <b>{x[0]}</b> · {x[1]}
+                <small>{x[2]}</small>
+              </p>
+            </div>
+          ))}
+        </section>
+      </div>
+      <section className="panel schedule">
+        <div className="panelhead">
+          <div>
+            <h3>Publishing schedule</h3>
+            <p>Upcoming content</p>
+          </div>
+          <button>
+            <CalendarDays /> Open calendar
+          </button>
+        </div>
+        <div className="timeline">
+          {["TODAY", "OCT 01", "OCT 03", "OCT 05"].map((x, i) => (
+            <div>
+              <b>{x}</b>
+              <span />
+              <p>
+                {
+                  [
+                    "Good Words Grow",
+                    "Du‘a Before Sleeping",
+                    "The Trustworthy One",
+                    "Family Reflection",
+                  ][i]
+                }
+                <small>
+                  {
+                    [
+                      "Hadith · 16:00",
+                      "Du‘a · 08:00",
+                      "Seerah · 10:00",
+                      "Article · 09:30",
+                    ][i]
+                  }
+                </small>
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+    </>
+  );
+}
+function AdminContent() {
+  return (
+    <section className="panel contentPanel">
+      <div className="contenttools">
+        <div className="searchfield">
+          <Search />
+          <input placeholder="Search title, ID, source…" />
+        </div>
+        <button>
+          <Filter /> Filters
+        </button>
+        <button>
+          All statuses <ChevronRight />
+        </button>
+      </div>
+      <div className="tabs">
+        <button className="active">
+          All content <i>284</i>
+        </button>
+        <button>Published</button>
+        <button>Drafts</button>
+        <button>In review</button>
+        <button>Scheduled</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Content</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Owner</th>
+            <th>Updated</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {items.slice(0, 7).map((x, i) => (
+            <tr>
+              <td>
+                <span className="tabletitle">
+                  {sections[x.type]?.icon}
+                  <span>
+                    <b>{x.title}</b>
+                    <small>{x.id}</small>
+                  </span>
+                </span>
+              </td>
+              <td>{sections[x.type]?.title.replace(" Garden", "")}</td>
+              <td>
+                <span className={"status s" + (i % 4)}>
+                  {
+                    ["Published", "In source review", "Draft", "Scheduled"][
+                      i % 4
+                    ]
+                  }
+                </span>
+              </td>
+              <td>{["Fatimah A.", "Umar K.", "Maryam S."][i % 3]}</td>
+              <td>{i + 1}h ago</td>
+              <td>
+                <MoreHorizontal />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  );
+}
+function Review() {
+  return (
+    <>
+      <div className="reviewIntro">
+        <div>
+          <h2>Review queue</h2>
+          <p>
+            Every lesson passes through careful editorial and Islamic source
+            review.
+          </p>
+        </div>
+        <div className="workflow">
+          <span className="done">Draft</span>
+          <i />
+          <span className="active">Editorial</span>
+          <i />
+          <span>Islamic source</span>
+          <i />
+          <span>Visual</span>
+          <i />
+          <span>Approved</span>
+        </div>
+      </div>
+      <section className="panel">
+        <div className="warning">
+          <AlertTriangle />
+          <div>
+            <b>6 items require Islamic source review</b>
+            <p>
+              Publication is blocked until source metadata and reviewer approval
+              are complete.
+            </p>
+          </div>
+        </div>
+        {items.slice(0, 5).map((x, i) => (
+          <div className="reviewrow">
+            <span className="type Hadith">{sections[x.type]?.icon}</span>
+            <div>
+              <small>
+                {x.id} · {sections[x.type]?.title}
+              </small>
+              <b>{x.title}</b>
+              <p>
+                {i < 2
+                  ? "⚠ Missing reviewer approval"
+                  : "Ready for next review stage"}
+              </p>
+            </div>
+            <span className="age">{x.age}</span>
+            <button>
+              Open review <ArrowRight />
+            </button>
+          </div>
+        ))}
+      </section>
+    </>
+  );
+}
+function AdminPlaceholder({ label }) {
+  return (
+    <section className="panel placeholder">
+      <span>
+        <Sprout />
+      </span>
+      <h2>{label} workspace</h2>
+      <p>
+        Manage {label.toLowerCase()} with source-conscious controls, permissions
+        and a complete audit trail.
+      </p>
+      <button className="admincreate">
+        <Plus /> Add {label.toLowerCase()}
+      </button>
+    </section>
+  );
+}
+function CreateModal({ close }) {
+  const [type, setType] = useState("Hadith");
+  return (
+    <div className="overlay">
+      <div className="createModal">
+        <div className="modalhead">
+          <div>
+            <span className="kicker">NEW CONTENT</span>
+            <h2>Plant something meaningful</h2>
+          </div>
+          <button onClick={close}>
+            <X />
+          </button>
+        </div>
+        <label>
+          Content type
+          <select value={type} onChange={(e) => setType(e.target.value)}>
+            {[
+              "Hadith",
+              "Qur’an lesson",
+              "Seerah lesson",
+              "Sunnah lesson",
+              "Du‘a",
+              "Character lesson",
+              "Children’s story",
+              "Article",
+            ].map((x) => (
+              <option>{x}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Title
+          <input placeholder="Enter a clear, helpful title" />
+        </label>
+        <div className="formrow">
+          <label>
+            Age group
+            <select>
+              <option>All ages</option>
+              <option>4–7</option>
+              <option>8–12</option>
+            </select>
+          </label>
+          <label>
+            Language
+            <select>
+              <option>English</option>
+              <option>Arabic</option>
+              <option>Hausa</option>
+              <option>French</option>
+            </select>
+          </label>
+        </div>
+        {type === "Hadith" && (
+          <div className="required">
+            <ShieldCheck />
+            <div>
+              <b>Source fields are mandatory</b>
+              <p>
+                Collection, book, reference number, Arabic text, translation and
+                authenticity grading must be completed before publication.
+              </p>
+            </div>
+          </div>
+        )}
+        <div className="modalactions">
+          <button onClick={close}>Cancel</button>
+          <button className="admincreate" onClick={close}>
+            Create draft <ArrowRight />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+function Footer() {
+  return (
+    <footer>
+      <div className="footerbrand">
+        <span className="brandmark">
+          <Sprout />
+        </span>
+        <div>
+          <b>SUNNA SEED PROJECT</b>
+          <p>Plant the Sunnah. Grow the Ummah.</p>
+        </div>
+      </div>
+      <div className="footlinks">
+        {[
+          ["Explore", ["Start Here", "Sunnah", "Hadith", "Qur’an", "Seerah"]],
+          [
+            "Discover",
+            ["Little Seeds", "Books", "Videos", "Articles", "Resources"],
+          ],
+          [
+            "About",
+            ["Our story", "Parents", "Social Media", "Contact", "Admin"],
+          ],
+        ].map(([h, ls]) => (
+          <div>
+            <b>{h}</b>
+            {ls.map((x) => (
+              <button
+                onClick={() =>
+                  go(
+                    x === "Admin"
+                      ? "/admin"
+                      : "/" + x.toLowerCase().replaceAll(" ", "-"),
+                  )
+                }
+              >
+                {x}
+              </button>
+            ))}
+          </div>
+        ))}
+      </div>
+      <div className="footerbottom">
+        <span>© 2026 Sunna Seed Project</span>
+        <span>Made with care for the Ummah 🌱</span>
+        <span>Privacy · Terms · Accessibility</span>
+      </div>
+    </footer>
+  );
+}
+function NotFound() {
+  return (
+    <section className="infoPage">
+      <span>🌱</span>
+      <h1>This path is still growing.</h1>
+      <p>Let’s return to the garden and discover something beautiful.</p>
+      <button className="primary" onClick={() => go("/")}>
+        Back home
+      </button>
+    </section>
+  );
+}
+createRoot(document.getElementById("root")).render(<App />);
